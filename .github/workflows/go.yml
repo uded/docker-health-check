@@ -31,7 +31,7 @@ jobs:
         args: --best
 
     - name: Test
-      run: go test -v ./...
+      run: go test -tags "http" -v ./...
       
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
@@ -62,7 +62,7 @@ jobs:
           args: --best
 
       - name: Test
-        run: go test -v ./...
+        run: go test -tags "json" -v ./...
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
