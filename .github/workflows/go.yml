@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  build-http:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -21,8 +21,8 @@ jobs:
     - name: Build
       env: 
         CGO_ENABLED: 0   
-      run: go build -o healthcheck -ldflags="-s -w" -v ./...
-    
+      run: go build -o healthcheck -tags "http" -ldflags="-s -w" -v ./...
+
     - name: UPX GitHub Action
       uses: crazy-max/ghaction-upx@v1
       with:
@@ -38,3 +38,34 @@ jobs:
       with:
         name: healthcheck
         path: healthcheck
+
+  build-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: Build
+        env:
+          CGO_ENABLED: 0
+        run: go build -o healthcheck_json -tags "json" -ldflags="-s -w" -v ./...
+
+      - name: UPX GitHub Action
+        uses: crazy-max/ghaction-upx@v1
+        with:
+          # File to compress
+          file: healthcheck_json
+          args: --best
+
+      - name: Test
+        run: go test -v ./...
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: healthcheck_json
+          path: healthcheck_json
